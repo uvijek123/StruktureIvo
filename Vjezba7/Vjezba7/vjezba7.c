@@ -3,20 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Struktura za čvor direktorija
+
 typedef struct _directory {
     char name[50];
     struct _directory* subdirectories;
     struct _directory* next;
 } Directory;
 
-// Struktura za stog
+
 typedef struct _stack {
     Directory* currentDirectory;
     struct _stack* nextStack;
 } Stack;
 
-// Funkcija za stvaranje novog direktorija
+
 Directory* createDirectory(char name[]) {
     Directory* newDirectory = (Directory*)malloc(sizeof(Directory));
     strcpy(newDirectory->name, name);
@@ -25,13 +25,13 @@ Directory* createDirectory(char name[]) {
     return newDirectory;
 }
 
-// Funkcija za dodavanje pod-direktorija
+
 void addSubdirectory(Directory* parent, Directory* subdirectory) {
     subdirectory->next = parent->subdirectories;
     parent->subdirectories = subdirectory;
 }
 
-// Funkcija za ispis sadržaja direktorija
+
 void printDirectory(Directory* currentDirectory) {
     printf("\nContents of directory %s:\n", currentDirectory->name);
 
@@ -42,7 +42,7 @@ void printDirectory(Directory* currentDirectory) {
     }
 }
 
-// Funkcija za promjenu trenutnog direktorija
+
 Directory* changeDirectory(Directory* currentDirectory, char name[]) {
     Directory* tempDir = currentDirectory->subdirectories;
     while (tempDir != NULL) {
@@ -54,7 +54,7 @@ Directory* changeDirectory(Directory* currentDirectory, char name[]) {
     return currentDirectory;
 }
 
-// Funkcija za povratak na prethodni direktorij
+
 Directory* goBack(Directory* currentDirectory, Directory* rootDirectory) {
     if (currentDirectory != rootDirectory) {
         return rootDirectory;
@@ -70,7 +70,7 @@ int main() {
     Directory* currentDirectory = rootDirectory;
 
     int choice;
-    char userInput[100]; // Prilagodba za unos korisnika
+    char userInput[100]; 
 
     do {
         printf("\nMenu:\n");
@@ -89,7 +89,7 @@ int main() {
             char dirName[50];
             printf("Enter directory name: ");
             fgets(dirName, sizeof(dirName), stdin);
-            dirName[strcspn(dirName, "\n")] = '\0'; // Uklanja \n iz unosa
+            dirName[strcspn(dirName, "\n")] = '\0'; 
 
             Directory* newDir = createDirectory(dirName);
             addSubdirectory(currentDirectory, newDir);
@@ -102,7 +102,7 @@ int main() {
             char dirName[50];
             printf("Enter directory name: ");
             fgets(dirName, sizeof(dirName), stdin);
-            dirName[strcspn(dirName, "\n")] = '\0'; // Uklanja \n iz unosa
+            dirName[strcspn(dirName, "\n")] = '\0'; 
 
             currentDirectory = changeDirectory(currentDirectory, dirName);
         }
