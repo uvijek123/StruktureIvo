@@ -1,0 +1,3 @@
+Dublin  500000
+Cork 120000
+Galway 80000
