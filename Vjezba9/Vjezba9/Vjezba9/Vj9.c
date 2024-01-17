@@ -1,0 +1,209 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+struct _node;
+typedef struct _node* Position;
+typedef struct _node {
+    int value;
+    Position left;
+    Position right;
+} Node;
+
+Position createNode(int value);
+Position insert(Position root, int value);
+void inorder(Position root);
+void preorder(Position root);
+void postorder(Position root);
+Position search(Position root, int value);
+int replace(Position root);
+int levelOrder(Position root);
+int randomValue();
+Position deleteNode(Position root, int value);
+
+int main() {
+
+    Position root = NULL;
+    Position rootRand = NULL;
+    srand(time(0));
+
+    root = insert(root, 2);
+    insert(root, 5);
+    insert(root, 7);
+    insert(root, 8);
+    insert(root, 11);
+    insert(root, 1);
+    insert(root, 4);
+    insert(root, 2);
+    insert(root, 3);
+    insert(root, 7);
+
+
+    printf("Original Level Order: ");
+    levelOrder(root);
+
+    replace(root);
+
+    printf("\nAfter Replacement Level Order: ");
+    levelOrder(root);
+
+    int keyToFind = 40;
+    Position foundNode = search(root, keyToFind);
+    if (foundNode != NULL)
+        printf("\nElement %d found.\n", keyToFind);
+    else
+        printf("\nElement %d not found.\n", keyToFind);
+
+    root = deleteNode(root, 30);
+
+    printf("\nAfter Deletion Level Order: ");
+    levelOrder(root);
+
+    rootRand = insert(rootRand, randomValue());
+    for (int i = 0; i < 10; i++) {
+        insert(rootRand, randomValue());
+    }
+
+    printf("\n");
+    levelOrder(rootRand);
+
+    return 0;
+}
+
+Position createNode(int value) {
+    Position newNode = (Position)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        perror("Unable to allocate memory for a new node");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->value = value;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+Position insert(Position root, int value) {
+    if (root == NULL)
+        return createNode(value);
+
+    if (value < root->value)
+        root->left = insert(root->left, value);
+    else if (value >= root->value)
+        root->right = insert(root->right, value);
+
+    return root;
+}
+
+void inorder(Position root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->value);
+        inorder(root->right);
+    }
+}
+
+void preorder(Position root) {
+    if (root != NULL) {
+        printf("%d ", root->value);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void postorder(Position root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d ", root->value);
+    }
+}
+
+Position search(Position root, int value) {
+    if (root == NULL || root->value == value)
+        return root;
+
+    if (value < root->value)
+        return search(root->left, value);
+    else
+        return search(root->right, value);
+}
+
+int replace(Position root) {
+    if (root == NULL) {
+        return 0;
+    }
+
+
+    int leftValue = replace(root->left);
+    int rightValue = replace(root->right);
+
+
+    int originalValue = root->value;
+
+
+    root->value = leftValue + rightValue;
+
+
+    return originalValue + root->value;
+}
+
+int levelOrder(Position root) {
+    if (root == NULL)
+        return 0;
+
+    Position queue[100] = { 0 };
+    int front = 0, rear = 0;
+
+    queue[rear++] = root;
+
+    while (front < rear) {
+        Position current = queue[front++];
+
+        printf("%d ", current->value);
+
+        if (current->left != NULL)
+            queue[rear++] = current->left;
+
+        if (current->right != NULL)
+            queue[rear++] = current->right;
+    }
+    return EXIT_SUCCESS;
+}
+
+int randomValue() {
+    return (rand() % (90 - 10 + 1)) + 10;
+}
+
+Position deleteNode(Position root, int value) {
+    if (root == NULL)
+        return root;
+
+    if (value < root->value)
+        root->left = deleteNode(root->left, value);
+    else if (value > root->value)
+        root->right = deleteNode(root->right, value);
+    else {
+        if (root->left == NULL) {
+            Position temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL) {
+            Position temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        Position temp = root->right;
+        while (temp->left != NULL)
+            temp = temp->left;
+
+        root->value = temp->value;
+
+        root->right = deleteNode(root->right, temp->value);
+    }
+
+    return root;
+}
